@@ -1,5 +1,6 @@
 package ua.prachyk.usersAPI.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -30,14 +31,20 @@ public class User {
 
     @Email
     @NotNull
-    @UniqueElements
     @Column(name = "email")
     private String email;
 
     @NotNull
-    @Column(name = "year_of_birth")
-    @Min(value = 1990, message = "Error, year must be higher 1990")
-    private LocalDate yearOfBirth;
+    @Column(name = "date_of_birth")
+    private LocalDate dateOfBirth;
+
+    @NotNull
+    @Column(name = "address")
+    private String address;
+
+    @NotNull
+    @Column(name = "phone")
+    private int phone;
 
 
 
