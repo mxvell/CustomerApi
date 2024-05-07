@@ -1,18 +1,17 @@
 package ua.prachyk.usersAPI.validator;
 
 import org.springframework.beans.factory.annotation.Value;
-
-
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.Arrays;
 import java.util.List;
 
 public class UserValidator {
-    @Value("${app.min.age}")
+
     public static int MIN_AGE;
-    private static String regex = ".*?@.*\\..*";
     public static final List<Character> FORBIDDEN_CHARS = Arrays.asList('!', '#', '$', '%', '^', '&', '*', '(', ')', '+', '\\', '|', '\'', '"', '/', '<', '>', '?');
+    private static String regex = ".*?@.*\\..*";
+
 
     public static boolean isValidUserEmail(String email) {
         if (email == null) {

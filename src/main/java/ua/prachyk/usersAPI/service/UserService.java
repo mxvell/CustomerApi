@@ -6,7 +6,6 @@ import ua.prachyk.usersAPI.exception.UserNotFoundException;
 import ua.prachyk.usersAPI.exception.UsersByDateOfBirthBetweenException;
 import ua.prachyk.usersAPI.model.User;
 import ua.prachyk.usersAPI.repository.UserRepository;
-
 import java.time.LocalDate;
 import java.util.List;
 
