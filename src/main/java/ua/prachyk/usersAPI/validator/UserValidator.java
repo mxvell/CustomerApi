@@ -1,20 +1,20 @@
-package ua.prachyk.usersAPI.valid;
+package ua.prachyk.usersAPI.validator;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
+
 
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.Arrays;
 import java.util.List;
-@Configuration
+
 public class UserValidator {
     @Value("${app.min.age}")
-    private int minAge;
-    private  String regex = ".*?@.*\\..*";
-    private final List<Character> forbiddenChairs = Arrays.asList('!', '#', '$', '%', '^', '&', '*', '(', ')', '+', '\\', '|', '\'', '"', '/', '<', '>', '?');
+    public static int MIN_AGE;
+    private static String regex = ".*?@.*\\..*";
+    public static final List<Character> FORBIDDEN_CHARS = Arrays.asList('!', '#', '$', '%', '^', '&', '*', '(', ')', '+', '\\', '|', '\'', '"', '/', '<', '>', '?');
 
-    public boolean isValidUserEmail(String email) {
+    public static boolean isValidUserEmail(String email) {
         if (email == null) {
             return false;
         }
@@ -23,7 +23,7 @@ public class UserValidator {
         }
 
         for (char chairs : email.toCharArray()) {
-            if (forbiddenChairs.contains(chairs)) {
+            if (FORBIDDEN_CHARS.contains(chairs)) {
                 return false;
             }
         }
@@ -33,9 +33,14 @@ public class UserValidator {
         return email.matches(regex);
     }
 
-    public boolean isValidUserAge(LocalDate dateOfBirth) {
+    public static boolean isValidUserAge(LocalDate dateOfBirth) {
         LocalDate today = LocalDate.now();
         int age = Period.between(dateOfBirth, today).getYears();
-        return age >= minAge;
+        return age >= MIN_AGE;
+    }
+
+    @Value("${app.min.age}")
+    public void setMinAge(int minAge) {
+        MIN_AGE = minAge;
     }
 }

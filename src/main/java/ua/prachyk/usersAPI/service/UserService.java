@@ -1,20 +1,14 @@
 package ua.prachyk.usersAPI.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import ua.prachyk.usersAPI.exception.DeleteUserWithIdException;
-import ua.prachyk.usersAPI.exception.UnderAgeUserException;
 import ua.prachyk.usersAPI.exception.UserNotFoundException;
 import ua.prachyk.usersAPI.exception.UsersByDateOfBirthBetweenException;
 import ua.prachyk.usersAPI.model.User;
 import ua.prachyk.usersAPI.repository.UserRepository;
-import ua.prachyk.usersAPI.valid.UserValidator;
 
 import java.time.LocalDate;
-import java.util.IllegalFormatCodePointException;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,20 +16,14 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    private final UserValidator userValidator;
-    @Value("${app.min.age}")
-    private int minAge;
-
-
     public User findById(Long id) {
-        return  userRepository.findById(id).orElseThrow(()->new UserNotFoundException("User with ID " + id + " not found."));
+        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User with ID " + id + " not found."));
     }
 
     public void updateUser(User userUpdated) {
         User user = findById(userUpdated.getId());
         user.setFirstName(userUpdated.getFirstName());
         user.setLastName(user.getLastName());
-        userValidator.isValidUserEmail(userUpdated.getEmail());
         user.setEmail(userUpdated.getEmail());
         user.setDateOfBirth(userUpdated.getDateOfBirth());
         user.setAddress(user.getAddress());
@@ -45,14 +33,12 @@ public class UserService {
 
     public void updateEmail(User userUpdated) {
         User user = findById(userUpdated.getId());
-        userValidator.isValidUserEmail(userUpdated.getEmail());
         user.setEmail(userUpdated.getEmail());
         userRepository.save(user);
     }
 
-    public void updateSomeFields(User userUpdated) {
+    public void updateFields(User userUpdated) {
         User user = findById(userUpdated.getId());
-        userValidator.isValidUserEmail(userUpdated.getEmail());
         user.setEmail(userUpdated.getEmail());
         user.setAddress(userUpdated.getAddress());
         user.setPhone(userUpdated.getPhone());
@@ -60,12 +46,8 @@ public class UserService {
     }
 
     public void registerUser(String firstName, String lastName, String email,
-                             LocalDate dateOfBirth, String address, int phone) {
-        if (!userValidator.isValidUserAge(dateOfBirth)) {
-            throw new UnderAgeUserException("Cannot create a user younger than " + minAge + " years old");
-        }
+                             LocalDate dateOfBirth, String address, String phone) {
         User user = new User();
-
         user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setEmail(email);
@@ -85,7 +67,6 @@ public class UserService {
 
     public void deleteById(Long id) {
         userRepository.deleteById(id);
-        throw new DeleteUserWithIdException("Deleted user with " + id + " excellent");
     }
 
 

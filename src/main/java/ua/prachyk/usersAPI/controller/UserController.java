@@ -51,7 +51,7 @@ public class UserController {
     @PutMapping("/{id}/fields")
     public ResponseEntity<Void> updateUserFields(@RequestBody User userUpdated) {
         userService.findById(userUpdated.getId());
-        userService.updateSomeFields(userUpdated);
+        userService.updateFields(userUpdated);
         return ResponseEntity.ok().build();
     }
 
@@ -61,8 +61,9 @@ public class UserController {
         List<User> users = userService.findUsersByDateOfBirthBetween(from, to);
         return ResponseEntity.ok(users);
     }
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable ("id") Long id){
+    public ResponseEntity<Void> deleteById(@PathVariable("id") Long id) {
         userService.deleteById(id);
         return ResponseEntity.ok().build();
     }

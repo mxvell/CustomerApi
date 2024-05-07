@@ -1,12 +1,14 @@
 package ua.prachyk.usersAPI.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
-import org.hibernate.validator.constraints.UniqueElements;
+import ua.prachyk.usersAPI.exception.InvalidEmailException;
+import ua.prachyk.usersAPI.exception.UnderAgeUserException;
+import ua.prachyk.usersAPI.validator.UserValidator;
 
 import java.time.LocalDate;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -44,8 +46,22 @@ public class User {
 
     @NotNull
     @Column(name = "phone")
-    private int phone;
+    private String phone;
 
+    public void setEmail(String email) {
+        boolean isEmailValid = UserValidator.isValidUserEmail(email);
+        if (!isEmailValid) {
+            throw new InvalidEmailException("User email is not valid!");
+        } else {
+            this.email = email;
+        }
+    }
 
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        if (!UserValidator.isValidUserAge(dateOfBirth)) {
+            throw new UnderAgeUserException("Cannot create a user younger than " + UserValidator.MIN_AGE + " years old");
+        }
 
+        this.dateOfBirth = dateOfBirth;
+    }
 }
