@@ -1,71 +1,79 @@
 package ua.prachyk.usersAPI.service;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ua.prachyk.usersAPI.dto.CustomerDTO;
+import ua.prachyk.usersAPI.dto.CustomerUpdateDTO;
 import ua.prachyk.usersAPI.exception.CustomerNotFoundException;
+import ua.prachyk.usersAPI.mapping.ManagerMapping;
 import ua.prachyk.usersAPI.model.Customer;
 import ua.prachyk.usersAPI.repository.CustomerRepository;
-import java.time.LocalDate;
+import ua.prachyk.usersAPI.validator.CustomerValidator;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
+
+    @Autowired
+    public CustomerService(CustomerRepository customerRepository) {
+        this.customerRepository = customerRepository;
+    }
 
     public Customer findById(Long id) {
         return customerRepository.findById(id).orElseThrow(() -> new CustomerNotFoundException("User with ID " + id + " not found."));
     }
 
-    public void updateUser(Customer customerUpdated) {
-        Customer customer = findById(customerUpdated.getId());
-        customer.setFirstName(customerUpdated.getFirstName());
-        customer.setLastName(customer.getLastName());
-        customer.setEmail(customerUpdated.getEmail());
-        customer.setDateOfBirth(customerUpdated.getDateOfBirth());
-        customer.setAddress(customer.getAddress());
-        customer.setPhone(customer.getPhone());
-        customerRepository.save(customer);
-    }
-
-    public void updateEmail(Customer customerUpdated) {
-        Customer customer = findById(customerUpdated.getId());
-        customer.setEmail(customerUpdated.getEmail());
-        customerRepository.save(customer);
-    }
-
-    public void updateFields(Customer customerUpdated) {
-        Customer customer = findById(customerUpdated.getId());
-        customer.setEmail(customerUpdated.getEmail());
-        customer.setAddress(customerUpdated.getAddress());
-        customer.setPhone(customerUpdated.getPhone());
-        customerRepository.save(customer);
-    }
-
-    public void registerUser(String firstName, String lastName, String email,
-                             LocalDate dateOfBirth, String address, String phone) {
-        Customer customer = new Customer();
-        customer.setFirstName(firstName);
-        customer.setLastName(lastName);
-        customer.setEmail(email);
-        customer.setDateOfBirth(dateOfBirth);
-        customer.setAddress(address);
-        customer.setPhone(phone);
-        customerRepository.save(customer);
-    }
-
-    public List<Customer> findUsersByDateOfBirthBetween(LocalDate from, LocalDate to) {
-        if (from.isAfter(to)) {
-            throw new UsersByDateOfBirthBetweenException(from + " date must be less than " + to + " date");
+    public List<CustomerDTO> findAll() {
+        List<Customer> customers = customerRepository.findAll();
+        List<CustomerDTO> customersDTO = new ArrayList<>();
+        for (Customer customer : customers) {
+            customersDTO.add(ManagerMapping.convertToDto(customer));
         }
-        return customerRepository.findByDateOfBirthBetween(from, to);
+        return customersDTO;
     }
 
-
+// NOT USING
     public void deleteById(Long id) {
         customerRepository.deleteById(id);
     }
 
+    public CustomerDTO save(CustomerDTO customerDTO) {
+        CustomerValidator.validateCustomerDTO(customerDTO);
+        Customer customer = new Customer();
+        customer.setFullName(customerDTO.getFullName());
+        customer.setEmail(customerDTO.getEmail());
+        customer.setPhone(customerDTO.getPhone());
+        customer.getCreated();
+        customer.getUpdated();
+        customer.isActive();
+        Customer savedCustomer = customerRepository.save(customer);
+        return ManagerMapping.convertToDto(savedCustomer);
+    }
 
+    public CustomerUpdateDTO update(CustomerUpdateDTO customerDTO) {
+        CustomerValidator.isValidPhone(customerDTO.getPhone());
+        Customer customer = customerRepository.findById(customerDTO.getId()).orElseThrow(() -> new CustomerNotFoundException("User with ID " + customerDTO.getId() + " not found."));
+        customer.setFullName(customerDTO.getFullName());
+        customer.setPhone(customerDTO.getPhone());
+        Customer updatedCustomer = customerRepository.save(customer);
+        return ManagerMapping.convertToUpdateDto(updatedCustomer);
+    }
+
+    public void softDeleteCustomer(Long id) {
+        Customer customer = customerRepository.findById(id).orElseThrow(() -> new CustomerNotFoundException("User with ID " + id + " not found."));
+        customer.setActive(false);
+        customerRepository.save(customer);
+    }
+    public List<CustomerDTO> findAllActiveCustomers() {
+        List<Customer> customers = customerRepository.findCustomerByActiveTrue();
+        List<CustomerDTO> customersDTO = new ArrayList<>();
+        for (Customer customer : customers) {
+            customersDTO.add(ManagerMapping.convertToDto(customer));
+        }
+        return customersDTO;
+    }
 }

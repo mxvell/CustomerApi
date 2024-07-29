@@ -1,64 +1,67 @@
 package ua.prachyk.usersAPI.controller;
 
-import lombok.RequiredArgsConstructor;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ua.prachyk.usersAPI.model.Customer;
+import ua.prachyk.usersAPI.dto.CustomerDTO;
+import ua.prachyk.usersAPI.dto.CustomerUpdateDTO;
+import ua.prachyk.usersAPI.mapping.ManagerMapping;
 import ua.prachyk.usersAPI.service.CustomerService;
 
-@RestController
-@RequestMapping("/user")
-@RequiredArgsConstructor
-public class CustomerController {
-    private final CustomerService userService;
+import java.util.List;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Customer> getUserById(@PathVariable Long id) {
-        Customer customer = userService.findById(id);
-        if (customer != null) {
-            return ResponseEntity.ok(customer);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+@RestController
+@RequestMapping("/api/customers")
+public class CustomerController {
+    private final CustomerService customerService;
+
+
+    @Autowired
+    public CustomerController(CustomerService customerService) {
+        this.customerService = customerService;
     }
 
-    @PostMapping
-    public ResponseEntity<Void> registerUser(@RequestBody Customer customer) {
-        userService.registerUser(customer.getFirstName(), customer.getLastName(), customer.getEmail(),
-                customer.getDateOfBirth(), customer.getAddress(), customer.getPhone());
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    @GetMapping("/")
+    public List<CustomerDTO> getAllCustomers() {
+        return customerService.findAll();
+    }
 
+    @GetMapping("/{id}")
+    public CustomerDTO getUserById(@PathVariable Long id) {
+        return  ManagerMapping.convertToDto(customerService.findById(id));
+    }
+
+    @PostMapping("/")
+    public ResponseEntity<CustomerDTO> create(@RequestBody @Valid CustomerDTO customer) {
+          CustomerDTO customerDTO = customerService.save(customer);
+          return new ResponseEntity<>(customerDTO, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateUser(@RequestBody Customer updateCustomer) {
-        userService.updateUser(updateCustomer);
-        return ResponseEntity.status(HttpStatus.OK).build();
+    public ResponseEntity<CustomerUpdateDTO> update(@RequestBody @Valid CustomerUpdateDTO customer) {
+        CustomerUpdateDTO customerDTO = customerService.update(customer);
+        return new ResponseEntity<>(customerDTO, HttpStatus.OK);
     }
-
-    @PutMapping("/{id}/email")
-    public ResponseEntity<Void> updateEmail(@RequestBody Customer emailCustomer) {
-        userService.findById(emailCustomer.getId());
-        userService.updateEmail(emailCustomer);
-        return ResponseEntity.noContent().build();
-    }
-
-    @PutMapping("/{id}/fields")
-    public ResponseEntity<Void> updateUserFields(@RequestBody Customer customerUpdated) {
-        userService.findById(customerUpdated.getId());
-        userService.updateFields(customerUpdated);
-        return ResponseEntity.ok().build();
-    }
-
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable("id") Long id) {
-        userService.deleteById(id);
+        customerService.deleteById(id);
         return ResponseEntity.ok().build();
     }
 
+    @DeleteMapping("/softDeleting/{id}")
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
+        customerService.softDeleteCustomer(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+    @GetMapping("/active")
+    public ResponseEntity<List<CustomerDTO>> getCustomerActive() {
+        List<CustomerDTO> activeCustomer = customerService.findAllActiveCustomers();
+        return  ResponseEntity.ok(activeCustomer);
+
+    }
 }
 
 
