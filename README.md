@@ -1,36 +1,63 @@
 
-Java practical test assignment
+Test task
+For junior Java developer
+You must implement an HTTP API server with basic CRUD operations for the Customer entity.
+Expected result: link to git repository.
+Backend - Spring Boot application.
+Frontend - not needed.
+Database - any relational persistent SQL DB (MySQL/PostgreSQL/...).
+Authentication - not needed.
+Endpoints
+Create customer
+POST /api/customers
+Content-Type application/json
+Body:
+fullName: String (2..50 chars including whitespaces)
+email: String (2..100 chars, unique, should include exactly one @)
+phone: String (6..14 chars, only digits, should start from +, optional field)
+Response body:
+id: Long
+fullName: String
+email: String
+phone: String
+Read all customers
+GET /api/customers
+Response body:
+List of:
+id: Long
+fullName: String
+email: String
+phone: String
+Read customer
+GET /api/customers/{id}
+Response body:
+id: Long
+fullName: String
+email: String
+phone: String
+Update customer
+PUT /api/customers/{id}
+Content-Type application/json
+Body:
+id: Long
+fullName: String (2..50 chars including whitespaces)
+email: String (not editable)
+phone: String (6..14 chars, only digits, should start from +)
+Response body:
+id: Long
+fullName: String
+email: String
+phone: String
+Delete customer
+DELETE /api/customers/{id}
+Just mark a customer as deleted, but leave his data in DB. Related DB column: is_active.
+Database structure
+customer table
+id: bigint
+created: bigint
+updated: bigint
+full_name: varchar
+email: varchar
+phone: varchar, nullable
+is_active: bool
 
-The task has two parts:
-1. Using the resources listed below learn what is RESTful API and what are the best practices to implement it 
-2. According to the requirements implement the RESTful API based on the web Spring Boot application: controller, responsible for the resource named Users. 
-
-Resources:
-RESTful API Design. Best Practices in a Nutshell.
-Error Handling for REST with Spring | Baeldung
-Testing in Spring Boot | Baeldung
-Testing | Spring
-
-Requirements:
-1. It has the following fields:
-1.1. Email (required). Add validation against email pattern
-1.2. First name (required)
-1.3. Last name (required)
-1.4. Birth date (required). Value must be earlier than current date
-1.5. Address (optional)
-1.6. Phone number (optional)
-2. It has the following functionality:
-2.1. Create customer. It allows to register users who are more than [18] years old. The value [18] should be taken from properties file.
-2.2. Update one/some customer fields
-2.3. Update all customer fields
-2.4. Delete customer
-2.5. Search for users by birth date range. Add the validation which checks that “From” is less than “To”.  Should return a list of objects
-3. Code is covered by unit tests using Spring 
-4. Code has error handling for REST
-5. API responses are in JSON format
-6. Use of database is not necessary. The data persistence layer is not required.
-7. Any version of Spring Boot. Java version of your choice
-8. You can use Spring Initializer utility to create the project: Spring Initializr
-
-Please note: 
-we assess only those assignments where all requirements are implemented
