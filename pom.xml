@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>ua.prachyk</groupId>
-	<artifactId>usersAPI</artifactId>
+	<artifactId>CustomerAssigmet</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>usersAPI</name>

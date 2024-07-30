@@ -27,7 +27,7 @@ public class CustomerDTO {
 
 
     @NotNull
-    @Size(min = 6, max = 14, message = "Error,only use number")
+    @Size(min = 6, max = 14, message = "Phone number must have length between 6 and 14")
     private String phone;
 
 }

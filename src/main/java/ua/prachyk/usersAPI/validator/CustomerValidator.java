@@ -22,7 +22,7 @@ public class CustomerValidator {
             throw new InvalidEmailException("Invalid email format");
         }
         if (customerDTO.getPhone() != null && !customerDTO.getPhone().isEmpty() && !CustomerValidator.isValidPhone(customerDTO.getPhone())){
-            throw new InvalidPhoneException("Invalid phone number format");
+            throw new InvalidPhoneException("Phone number must have length between 6 and 14");
         }
     }
     public static boolean isValidUserEmail(String email) {
@@ -33,8 +33,8 @@ public class CustomerValidator {
             return false;
         }
 
-        for (char chairs : email.toCharArray()) {
-            if (FORBIDDEN_CHARS_EMAIL.contains(chairs)) {
+        for (char chars : email.toCharArray()) {
+            if (FORBIDDEN_CHARS_EMAIL.contains(chars)) {
                 return false;
             }
         }
@@ -51,6 +51,7 @@ public class CustomerValidator {
         if (!phone.matches(regexForPhone)) {
             return false;
         }
+
         for (char chairs : phone.toCharArray()) {
             if (FORBIDDEN_CHARS_PHONE.contains(chairs)) {
                 return false;

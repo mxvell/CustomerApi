@@ -11,8 +11,5 @@ import java.util.Optional;
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
     Optional<Customer> findById(Long id);
-    @Query("SELECT c FROM Customer  c WHERE c.isActive = true ")
-    List<Customer> findCustomerByActiveTrue();
-
 
 }

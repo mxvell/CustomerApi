@@ -46,21 +46,9 @@ public class CustomerController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable("id") Long id) {
-        customerService.deleteById(id);
-        return ResponseEntity.ok().build();
-    }
-
-    @DeleteMapping("/softDeleting/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
-        customerService.softDeleteCustomer(id);
+        customerService.deleteCustomer(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-    @GetMapping("/active")
-    public ResponseEntity<List<CustomerDTO>> getCustomerActive() {
-        List<CustomerDTO> activeCustomer = customerService.findAllActiveCustomers();
-        return  ResponseEntity.ok(activeCustomer);
-
     }
 }
 

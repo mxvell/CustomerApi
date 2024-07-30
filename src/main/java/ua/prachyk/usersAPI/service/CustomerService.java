@@ -36,11 +36,6 @@ public class CustomerService {
         return customersDTO;
     }
 
-// NOT USING
-    public void deleteById(Long id) {
-        customerRepository.deleteById(id);
-    }
-
     public CustomerDTO save(CustomerDTO customerDTO) {
         CustomerValidator.validateCustomerDTO(customerDTO);
         Customer customer = new Customer();
@@ -63,17 +58,10 @@ public class CustomerService {
         return ManagerMapping.convertToUpdateDto(updatedCustomer);
     }
 
-    public void softDeleteCustomer(Long id) {
+    public void deleteCustomer(Long id) {
         Customer customer = customerRepository.findById(id).orElseThrow(() -> new CustomerNotFoundException("User with ID " + id + " not found."));
         customer.setActive(false);
         customerRepository.save(customer);
     }
-    public List<CustomerDTO> findAllActiveCustomers() {
-        List<Customer> customers = customerRepository.findCustomerByActiveTrue();
-        List<CustomerDTO> customersDTO = new ArrayList<>();
-        for (Customer customer : customers) {
-            customersDTO.add(ManagerMapping.convertToDto(customer));
-        }
-        return customersDTO;
-    }
+
 }

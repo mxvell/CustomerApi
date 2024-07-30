@@ -7,13 +7,16 @@ import ua.prachyk.usersAPI.model.Customer;
 
 public class ManagerMapping {
     private static final ModelMapper modelMapper;
+
     static {
         modelMapper = new ModelMapper();
     }
-     public static CustomerDTO convertToDto(Customer customer) {
+
+    public static CustomerDTO convertToDto(Customer customer) {
         return modelMapper.map(customer, CustomerDTO.class);
-     }
-     public static CustomerUpdateDTO convertToUpdateDto(Customer customer) {
+    }
+
+    public static CustomerUpdateDTO convertToUpdateDto(Customer customer) {
         return modelMapper.map(customer, CustomerUpdateDTO.class);
-     }
+    }
 }
